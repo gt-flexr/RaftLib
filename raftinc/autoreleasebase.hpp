@@ -26,12 +26,13 @@
  */
 template < class T > struct autopair
 {
-   autopair( T &ele, Buffer::Signal &sig ) : ele( ele ),
-                                             sig( sig )
-   {}
+    autopair( T &ele, Buffer::Signal &sig ) : ele( ele ),
+                                              sig( sig )
+    {}
 
-   T              &ele;
-   Buffer::Signal &sig;
+    T              &ele;
+    Buffer::Signal &sig;
+    using self_type = T; 
 };
 
 class autoreleasebase 

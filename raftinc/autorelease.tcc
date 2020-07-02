@@ -160,6 +160,16 @@ public:
       }
    }
 
+   autorelease_iterator< T >    begin()
+   {
+       return( autorelease_iterator< T >( (*this) ) );
+   }
+
+   autorelease_iterator< T >    end()
+   {
+
+   }
+
    /**
     * getindex - returns index for foreach constructs,
     * future versions will deprecate this for all types
