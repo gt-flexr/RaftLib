@@ -59,6 +59,8 @@ public:
        * anyways if the compiler can't figure out how to inline
        * the object return for the rvalue which we're assigning
        * to the lvalue with an auto type
+       * FIXME - probably need to go to old fashioned counting..if you have things
+       * go out of scope, we don't want to release back to the FIFO too early. 
        */
       const_cast< autorelease< T, type >& >( other ).copied = true;
    }
@@ -109,66 +111,65 @@ private:
 template < class T > class autorelease< T, peekrange > : public autoreleasebase
 {
 public:
-   autorelease( FIFO             &fifo, 
-                   T * const      queue,
-                Buffer::Signal   * const sig,
-                const std::size_t curr_read_ptr,
-                const std::size_t n_items ) : autoreleasebase(),
-                                              fifo( fifo ),
-                                              queue( queue ),
-                                              signal( sig ),
-                                              crp  ( curr_read_ptr ),
-                                              n_items( n_items ),
-                                              queue_size( fifo.capacity() )
-   {
-      
-   }
+    autorelease( FIFO             &fifo, 
+                    T * const      queue,
+                 Buffer::Signal   * const sig,
+                 const std::size_t curr_read_ptr,
+                 const std::size_t n_items ) : autoreleasebase(),
+                                               fifo( fifo ),
+                                               queue( queue ),
+                                               signal( sig ),
+                                               crp  ( curr_read_ptr ),
+                                               n_items( n_items ),
+                                               queue_size( fifo.capacity() )
+    {
+    }
 
-   autorelease( const autorelease< T, peekrange > &other ) : 
-      autoreleasebase(),
-      fifo( other.fifo ),
-      queue( other.queue ),
-      signal( other.signal ),
-      crp( other.crp ),
-      n_items( other.n_items ),
-      queue_size( other.queue_size )
-   {
-      const_cast< autorelease< T, peekrange >& >( other ).copied = true;
-   }
-    
-   ~autorelease()
-   {
-      if( ! copied )
-      {
-         fifo.unpeek();
-      }
-   }
+    autorelease( const autorelease< T, peekrange > &other ) : 
+       autoreleasebase(),
+       fifo( other.fifo ),
+       queue( other.queue ),
+       signal( other.signal ),
+       crp( other.crp ),
+       n_items( other.n_items ),
+       queue_size( other.queue_size )
+    {
+       const_cast< autorelease< T, peekrange >& >( other ).copied = true;
+    }
+     
+    ~autorelease()
+    {
+        if( ! copied )
+        {
+            fifo.unpeek();
+        }
+    }
 
-   autopair< T > operator []( const std::size_t index )
-   {
-      if( index >= n_items )
-      {
-         std::stringstream ss;
-         ss << "Index (" << index << ") out of bounds, "
-         << "max value is (" << (n_items - 1) << ")\n";
-         throw std::length_error( ss.str() );
-      }
-      else
-      {
-         std::size_t ptr_val( (index + crp) % queue_size );
-         return( std::move( autopair< T >( queue[ ptr_val ], signal[ ptr_val ] ) ) );
-      }
-   }
+    autopair< T > operator []( const std::size_t index )
+    {
+        if( index >= n_items )
+        {
+            std::stringstream ss;
+            ss << "Index (" << index << ") out of bounds, "
+            << "max value is (" << (n_items - 1) << ")\n";
+            throw std::length_error( ss.str() );
+        }
+        else
+        {
+            std::size_t ptr_val( (index + crp) % queue_size );
+            return( std::move( autopair< T >( queue[ ptr_val ], signal[ ptr_val ] ) ) );
+        }
+    }
 
-   autorelease_iterator< T >    begin()
-   {
-       return( autorelease_iterator< T >( (*this) ) );
-   }
+    autorelease_iterator< T >    begin()
+    {
+        return( autorelease_iterator< T >(    ) );
+    }
 
-   autorelease_iterator< T >    end()
-   {
-
-   }
+    autorelease_iterator< T >    end()
+    {
+        return( autorelease_iterator< T >( (*this), 
+    }
 
    /**
     * getindex - returns index for foreach constructs,
@@ -185,7 +186,6 @@ public:
       return( n_items );
    }
 
-   /** TODO, build iterator for this **/
 private:
    FIFO             &fifo;
    T  *  const            queue;

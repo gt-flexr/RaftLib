@@ -25,12 +25,36 @@
 //TODO, add enable_if to sensure AUTORELEASE object inherits from 
 //autorelease
 
-template < class AUTORELEASE_OBJECT > class autorelease_iterator : 
+
+/**
+ * PLAN: 
+ * constructor takes in: FIFO object, queue, 
+ * n_items, basically most of the things that
+ * the autorelease object has, we can't use the
+ * [] overload b/c of the exception, but...
+ * we can use the rest of the info directly. 
+ * 
+ * NOTE: we'll also need to pass through 
+ * a way to keep the queue tied up while
+ * the iterators still exist, i.e., we can't
+ * recycle till we destruct these, meaning
+ * they extend the ref-count of the parent
+ * autorelease object.
+ * 
+ * Iterator ret val will be a std::pair, 
+ * the first value must be the q value
+ * the second is the signal so it'll work
+ * with things like std::sort for in-place
+ * sort. We'll also need to figure out how
+ * to return a std::pair ref :). 
+ */
+
+template < class T > class autorelease_iterator : 
     public std::iterator< std::forward_iterator_tag, AUTORELASE_OBJECT::self_type >
 {
 
 public:
-   explicit autorelease_iterator(  )
+   explicit autorelease_iterator( ) 
    
    autorelease_iterator( portmap_t * port_map, std::size_t index );
 
@@ -38,6 +62,7 @@ public:
    
    bool operator==(const autorelease_iterator& rhs) const; 
    bool operator!=(const autorelease_iterator& rhs) const;
+   
    FIFO& operator*() const;
    
    const std::string& name() const;
@@ -45,39 +70,6 @@ public:
 private:
    using map_iterator_type = std::decay_t<decltype(begin(portmap_t::map))>;
 
-   map_iterator_type map_iterator;
 };
-
-
-autorelease_iterator&
-autorelease_iterator::operator++() 
-{
-  ++map_iterator;
-   return( (*this) );
-}
-
-const std::string&
-autorelease_iterator::name() const
-{
-    return( map_iterator->first );
-}
-
-bool
-autorelease_iterator::operator==( const autorelease_iterator &rhs ) const
-{
-   return( map_iterator == rhs.map_iterator );
-}
-
-bool 
-autorelease_iterator::operator!=( const autorelease_iterator &rhs ) const
-{
-   return( map_iterator != rhs.map_iterator );
-}
-
-FIFO&
-autorelease_iterator::operator*() const
-{ 
-   return(*map_iterator->second.getFIFO());
-}
 
 #endif /* END AUTORELEASEITERATOR_TCC */
