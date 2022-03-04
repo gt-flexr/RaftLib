@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
 project(RaftLib)
 set( version 0.9a )
 set( CMAKE_INCLUDE_CURRENT_DIR ON )
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 list( APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake )
 
 include(Colors)
