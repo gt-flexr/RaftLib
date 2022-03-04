@@ -1,5 +1,5 @@
 
-set(CPP_SRC_FILES 
+set(CPP_SRC_FILES
     allocate.cpp
     basicparallel.cpp
     blocked.cpp
@@ -40,27 +40,27 @@ set(CPP_SRC_FILES
     systemsignalhandler.cpp
 )
 
-add_library( raft ${CPP_SRC_FILES} )
+add_library( raft SHARED ${CPP_SRC_FILES} )
 target_compile_definitions(raft PRIVATE -DLIBCOMPILE=1 -DRDTSCP=1 )
-target_include_directories(raft 
-    PUBLIC 
-    ${PROJECT_SOURCE_DIR}/raftinc 
+target_include_directories(raft
+    PUBLIC
+    ${PROJECT_SOURCE_DIR}/raftinc
     ${PROJECT_SOURCE_DIR}
     ${CMAKE_SCOTCH_INCS}
     ${CMAKE_QTHREAD_INCS}
 )
 
-target_link_libraries( 
-                       raft 
+target_link_libraries(
+                       raft
                        ${CMAKE_SCOTCH_LIBS}
-                       ${CMAKE_QTHREAD_LIBS} 
+                       ${CMAKE_QTHREAD_LIBS}
                        demangle
                        affinity
                      )
 
 
 # Enable warnings if using clang or gcc.
-if ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang" 
+if ( "${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang"
   OR "${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU" )
 
 target_compile_options( raft

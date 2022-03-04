@@ -15,7 +15,7 @@ find_package( QThreads )
 ##
 include( CheckSTD )
 
-## 
+##
 # helpers
 ##
 add_subdirectory(helpers)
@@ -23,13 +23,13 @@ add_subdirectory(helpers)
 ##
 # for cache line size
 ##
-add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" ) 
+add_definitions( "-DL1D_CACHE_LINE_SIZE=${L1D_LINE_SIZE}" )
 
 
 
 ##
 # need this for examples and testcases
-## 
+##
 find_package( Threads )
 ##
 # load git submodules
@@ -48,7 +48,7 @@ endif( BUILD_EXAMPLES )
 
 
 mark_as_advanced( BUILD_WOPENCV )
-set( BUILD_WOPENCV false CACHE BOOL "Build OpenCV Examples if true" ) 
+set( BUILD_WOPENCV false CACHE BOOL "Build OpenCV Examples if true" )
 if( BUILD_WOPENCV )
     add_subdirectory( examples/opencv )
 endif( BUILD_WOPENCV )
@@ -66,10 +66,10 @@ endif( BUILD_TESTS )
 ##
 # install main headers in ${prefix}/include dir
 ##
-set( MAINHEADERS 
-     raft 
-     raftio 
-     raftmath 
+set( MAINHEADERS
+     raft
+     raftio
+     raftmath
      raftrandom
      raftstat )
 foreach( HFILE ${MAINHEADERS} )
@@ -86,8 +86,8 @@ if( NOT WIN32 )
 mark_as_advanced( PKG_CONFIG_PATHWAY )
 set( PKG_CONFIG_PATH "" CACHE STRING "Set the pkg-config path, othwerwise will figure out" )
 if( NOT PKG_CONFIG_PATH )
-execute_process( COMMAND  pkg-config --variable pc_path pkg-config 
-                 COMMAND  tr ':' '\n' 
+execute_process( COMMAND  pkg-config --variable pc_path pkg-config
+                 COMMAND  tr ':' '\n'
                  COMMAND  head -n 1
                  OUTPUT_VARIABLE LOCAL_PKG_CONFIG_PATHWAY )
 set( PKG_CONFIG_PATH ${LOCAL_PKG_CONFIG_PATHWAY} )
@@ -97,7 +97,7 @@ string(REPLACE ":" ";" PREFIX_LIST "${CMAKE_SYSTEM_PREFIX_PATH}")
 list(FIND PREFIX_LIST ${CMAKE_INSTALL_PREFIX}  _index)
 
 if(${_index} GREATER 0)
-    file( MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/pkgconfig ) 
+    file( MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/pkgconfig )
     set( PKG_CONFIG_PATH ${CMAKE_INSTALL_PREFIX}/pkgconfig )
     message( WARNING "You should set ${RED}PKG_CONFIG_PATH=${CMAKE_INSTALL_PREFIX}/pkgconfig/:$PKG_CONFIG_PATH ${ColourReset} when installing to non-standard prefix for pkg-config to work correctly!" )
 else()
@@ -109,4 +109,4 @@ endif()
 configure_file( "raftlib.pc.in" "raftlib.pc" @ONLY )
 install( FILES ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/pkgconfig/ )
 
-endif( NOT WIN32 )                     
+endif( NOT WIN32 )
