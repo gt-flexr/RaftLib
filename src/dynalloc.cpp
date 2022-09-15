@@ -118,7 +118,7 @@ dynalloc::run()
    while( ! exit_alloc )
    {
       /** monitor fifo's **/
-      std::chrono::microseconds dura( 3000 );
+      std::chrono::milliseconds dura( 1000 );
       std::this_thread::sleep_for( dura );
 
       auto &container( (this)->source_kernels.acquire() );

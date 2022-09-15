@@ -133,14 +133,14 @@ public:
       });
 
       volatile bool exit_para( false );
-      /** launch parallelism monitor **/
-      parallelism_monitor pm( (*this)     /** ref to this    **/, 
-                              alloc       /** allocator      **/,
-                              sched       /** scheduler      **/,
-                              exit_para   /** exit parameter **/);
-      std::thread parallel_mon( [&](){
-         pm.start();
-      });
+      ///** launch parallelism monitor **/
+      //parallelism_monitor pm( (*this)     /** ref to this    **/,
+      //                        alloc       /** allocator      **/,
+      //                        sched       /** scheduler      **/,
+      //                        exit_para   /** exit parameter **/);
+      //std::thread parallel_mon( [&](){
+      //   pm.start();
+      //});
       /** join scheduler first **/
       sched_thread.join();
 
@@ -149,7 +149,7 @@ public:
       mem_thread.join();
       /** no more need to duplicate kernels **/
       exit_para = true;
-      parallel_mon.join();
+      // parallel_mon.join();
 
       /** all fifo's deallocated when alloc goes out of scope **/
       return; 
