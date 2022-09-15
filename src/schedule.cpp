@@ -221,6 +221,11 @@ Schedule::kernelRun( raft::kernel * const kernel,
          finished = true;
       }
    }
+   else
+   {
+     // a kernel is scheduled, but kernel->run() is not executed.
+     return false;
+   }
    /**
     * must recheck data items again after port valid check, there could
     * have been a push between these two conditional statements.
