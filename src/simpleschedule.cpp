@@ -113,7 +113,7 @@ simple_schedule::start()
        * NOTE: added to keep from having to unlock these so frequently
        * might need to make the interval adjustable dep. on app
        */
-      std::chrono::milliseconds dura( 3 );
+      std::chrono::milliseconds dura( 5 );
       std::this_thread::sleep_for( dura );
    }
    return;
