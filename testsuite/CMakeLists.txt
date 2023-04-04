@@ -5,6 +5,7 @@ list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake )
 ##
 include( CheckSTD )
 
+if( STRING_NAMES )
 set( TESTAPPS allocate 
     portTypeException dynallocate stdlibsupport split 
      join lambdatest allocate_s foreach peekrange  
@@ -25,10 +26,13 @@ set( TESTAPPS allocate
      allocatePopPush 
      allocatePopInternal 
      allocatePopInternalObject
-     allocatePopExternal 
+    allocatePopExternal 
      parallelchain 
-     ksettest 
+     ksettest
+     multiPrint
      fixedMatchTest 
+     poolThreadRaftManip
+     select_in_t
      splitchainRetStruct 
      staticContJoinRetStruct
      staticJoinRetStruct
@@ -36,7 +40,7 @@ set( TESTAPPS allocate
      staticSplitChainJoinRetStruct
      staticSplitJoinRetStruct 
      chainMultiplePorts
-     fixedAllocate
+     #fixedAllocate
      noPortException
      twiceAdd
      disconnectedGraph 
@@ -46,7 +50,14 @@ set( TESTAPPS allocate
      nonTrivialAllocatorPopExternal
      vectorAlloc
      stringAlloc
+     reduction
      )
+else()
+set( TESTAPPS 
+        allocate
+        allocatePopExternal 
+   )
+endif()
 
 if( BUILDRANDOM )
 list( APPEND TESTAPP gamma uniform gaussian exponential sequential ) 

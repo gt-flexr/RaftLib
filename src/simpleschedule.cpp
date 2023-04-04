@@ -23,12 +23,12 @@
 #include <map>
 #include <cmath>
 #include <chrono>
+#include <affinity>
 
 #include "kernel.hpp"
 #include "map.hpp"
 #include "simpleschedule.hpp"
 #include "rafttypes.hpp"
-#include "affinity.hpp"
 
 #ifdef USE_PARTITION
 #include "partition_scotch.hpp"
@@ -71,9 +71,7 @@ simple_schedule::start()
    auto &container( kernel_set.acquire() );
    for( auto * const k : container )
    {  
-      auto * const th_info( new thread_info_t( k ) );
-      th_info->data.loc = k->getCoreAssignment();
-      thread_map.emplace_back( th_info );
+      handleSchedule( k );
    }
    kernel_set.release();
    
@@ -126,6 +124,8 @@ simple_schedule::handleSchedule( raft::kernel * const kernel )
        * TODO: lets add the affinity dynamically here
        */
       auto * const th_info( new thread_info_t( kernel ) );
+      th_info->data.loc = kernel->getCoreAssignment();
+
       /** 
        * thread function takes a reference back to the scheduler
        * accessible done boolean flag, essentially when the 
@@ -168,8 +168,14 @@ simple_schedule::simple_run( void * data )
    }
    while( ! *(thread_d->finished) )
    {
-      Schedule::kernelRun( thread_d->k, *(thread_d->finished) );
+      bool validScheduling = Schedule::kernelRun( thread_d->k, *(thread_d->finished) );
       //takes care of peekset clearing too
       Schedule::fifo_gc( &in, &out, &peekset );
+
+      if(validScheduling == false)
+      {
+        std::chrono::milliseconds dura( 5 );
+        std::this_thread::sleep_for( dura );
+      }
    }
 }

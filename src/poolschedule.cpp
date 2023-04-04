@@ -33,12 +33,17 @@
 #include <qthread/sinc.h>
 #include <mutex>
 #include <chrono>
+#ifdef BENCHMARK
+#include <sched.h>
+#endif
+#include <affinity>
 
-#include "affinity.hpp"
 #ifdef USE_PARTITION
 #include "partition_scotch.hpp"
 #endif
 #include "defs.hpp"
+
+
 
 pool_schedule::pool_schedule( raft::map &map ) : Schedule( map )
 {
@@ -144,6 +149,13 @@ aligned_t pool_schedule::pool_run( void *data )
 #endif   
    volatile bool done( false );
    std::uint8_t run_count( 0 );
+#ifdef BENCHMARK
+   raft::kernel::initialized_count++;
+   while( raft::kernel::initialized_count != raft::kernel::kernel_count )
+   {
+       raft::yield();
+   }
+#endif 
    while( ! done )
    {
       Schedule::kernelRun( thread_d->k, done );

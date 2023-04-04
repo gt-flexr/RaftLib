@@ -4,6 +4,7 @@
 #include "map.hpp"
 #include "schedule.hpp"
 #include "defs.hpp"
+#include "sysschedutil.hpp"
 
 
 Schedule::Schedule( raft::map &map ) :  kernel_set( map.all_kernels ),
@@ -220,6 +221,11 @@ Schedule::kernelRun( raft::kernel * const kernel,
          invalidateOutputPorts( kernel );
          finished = true;
       }
+   }
+   else
+   {
+     // a kernel is scheduled, but kernel->run() is not executed.
+     return false;
    }
    /**
     * must recheck data items again after port valid check, there could

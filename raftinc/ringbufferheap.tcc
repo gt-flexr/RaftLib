@@ -21,7 +21,7 @@
 #define RAFTRINGBUFFERHEAP_TCC  1
 
 #include "portexception.hpp"
-#include "ringbufferheap_abstract.tcc"
+#include "ringbufferheap_lessabstract.tcc"
 #include "defs.hpp"
 #include "alloc_traits.tcc"
 #include "prefetch.hpp"
@@ -35,10 +35,10 @@ class RingBufferBase<
     T,
     Type::Heap,
     typename std::enable_if< inline_nonclass_alloc< T >::value >::type >
-: public RingBufferBaseHeap< T, Type::Heap >
+: public RingBufferBaseHeapAbstract< T, Type::Heap >
 {
 public:
-   RingBufferBase() : RingBufferBaseHeap< T, Type::Heap >()
+   RingBufferBase() : RingBufferBaseHeapAbstract< T, Type::Heap >()
    {
    }
 
@@ -304,6 +304,9 @@ protected:
           (this)->producer_data.write_stats->bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;
+#if defined(__aarch64__)
+      asm volatile( "dmb ishst" : : : "memory" ); /** memory write barrier **/
+#endif
        Pointer::inc( buff_ptr->write_pt );
 #if 0       
       if( signal == raft::quit )
@@ -478,10 +481,10 @@ class RingBufferBase<
     T,
     Type::Heap,
     typename std::enable_if< inline_class_alloc< T >::value >::type >
-: public RingBufferBaseHeap< T, Type::Heap >
+: public RingBufferBaseHeapAbstract< T, Type::Heap >
 {
 public:
-   RingBufferBase() : RingBufferBaseHeap< T, Type::Heap >()
+   RingBufferBase() : RingBufferBaseHeapAbstract< T, Type::Heap >()
    {
    }
 
@@ -740,6 +743,9 @@ protected:
           (this)->producer_data.write_stats->bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;
+#if defined(__aarch64__)
+      asm volatile( "dmb ishst" : : : "memory" ); /** memory write barrier **/
+#endif
        Pointer::inc( buff_ptr->write_pt );
       (this)->datamanager.exitBuffer( dm::push );
    }
@@ -778,8 +784,8 @@ protected:
             {
                rd_stats  = 1;
             }
-            raft::yield();
          }
+         raft::yield();
       }
       auto * const buff_ptr( (this)->datamanager.get() );
       const std::size_t read_index( Pointer::val( buff_ptr->read_pt ) );
@@ -915,10 +921,10 @@ class RingBufferBase<
     T,
     Type::Heap,
     typename std::enable_if< ext_alloc< T >::value >::type >
-: public RingBufferBaseHeap< T, Type::Heap >
+: public RingBufferBaseHeapAbstract< T, Type::Heap >
 {
 public:
-   RingBufferBase() : RingBufferBaseHeap< T, Type::Heap >()
+   RingBufferBase() : RingBufferBaseHeapAbstract< T, Type::Heap >()
    {
    }
 
@@ -1205,6 +1211,9 @@ protected:
          (this)->producer_data.write_stats->bec.count++;
        }
       buff_ptr->signal[ write_index ]         = signal;
+#if defined(__aarch64__)
+      asm volatile( "dmb ishst" : : : "memory" ); /** memory write barrier **/
+#endif
        Pointer::inc( buff_ptr->write_pt );
 #if 0       
       if( signal == raft::quit )
