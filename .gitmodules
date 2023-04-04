@@ -1,12 +1,16 @@
-[submodule "git-dep/cmdargs"]
-	path = git-dep/cmdargs
-	url = https://github.com/jonathan-beard/cmdargs.git
 [submodule "git-dep/shm"]
 	path = git-dep/shm
-	url = https://github.com/RaftLib/shm.git
+  url = git@github.com:jheo4/shm.git
+  branch = flexr
+[submodule "git-dep/cmdargs"]
+	path = git-dep/cmdargs
+	url = git@github.com:jheo4/cmdargs.git
+  branch = flexr
 [submodule "git-dep/affinity"]
 	path = git-dep/affinity
-	url = https://github.com/RaftLib/affinity.git
+	url = git@github.com:jheo4/affinity.git
+  branch = flexr
 [submodule "git-dep/demangle"]
 	path = git-dep/demangle
-	url = https://github.com/RaftLib/demangle.git
+	url = git@github.com:jheo4/demangle.git
+  branch = flexr
