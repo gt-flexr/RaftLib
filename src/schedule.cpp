@@ -214,6 +214,8 @@ Schedule::kernelRun( raft::kernel * const kernel,
                      volatile bool       &finished )
 {
    bool retCode {true};
+   // problem -- always kernels are scheduled by input..
+   /*
    if( kernelHasInputData( kernel ) )
    {
       const auto sig_status( kernel->run() );
@@ -228,6 +230,15 @@ Schedule::kernelRun( raft::kernel * const kernel,
      // a kernel is scheduled, but kernel->run() is not executed.
      retCode = false;
    }
+   */
+
+   const auto sig_status( kernel->run() );
+   if( sig_status == raft::stop )
+   {
+     invalidateOutputPorts( kernel );
+     finished = true;
+   }
+
    /**
     * must recheck data items again after port valid check, there could
     * have been a push between these two conditional statements.
