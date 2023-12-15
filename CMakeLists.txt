@@ -125,6 +125,6 @@ endif()
 
 
 configure_file( "raftlib.pc.in" "raftlib.pc" @ONLY )
-install( FILES ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/pkgconfig/ )
+install( FILES ${CMAKE_CURRENT_BINARY_DIR}/raftlib.pc DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pkgconfig/ )
 
 endif( NOT WIN32 )
